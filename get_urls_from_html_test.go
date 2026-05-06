@@ -22,8 +22,20 @@ func TestGetURLsFromHTMLAbsolute(t *testing.T) {
 		{
 			name:      "Get Urls",
 			inputURL:  "https://crawler-test.com",
-			inputBody: `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a></body></html>`,
-			expected:  []string{"https://crawler-test.com"},
+			inputBody: `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a><a href="https://crawler-test.com"><span>Boot.dev</span></a></body></html>`,
+			expected:  []string{"https://crawler-test.com", "https://crawler-test.com"},
+		},
+		{
+			name:      "Get Urls, with a relative",
+			inputURL:  "https://crawler-test.com",
+			inputBody: `<html><body><a href="https://crawler-test.com"><span>Boot.dev</span></a><a href="/posts/article"><span>Boot.dev</span></a></body></html>`,
+			expected:  []string{"https://crawler-test.com", "https://crawler-test.com/posts/article"},
+		},
+		{
+			name:      "No URLs",
+			inputURL:  "https://crawler-test.com",
+			inputBody: `<html><body><p>No URLs here</p></body></html>`,
+			expected:  []string{},
 		},
 	}
 

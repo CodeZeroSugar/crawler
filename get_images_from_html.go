@@ -7,7 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
+func getImagesFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 	htmlReader := strings.NewReader(htmlBody)
 	htmlDoc, err := goquery.NewDocumentFromReader(htmlReader)
 	if err != nil {
@@ -16,8 +16,8 @@ func getURLsFromHTML(htmlBody string, baseURL *url.URL) ([]string, error) {
 
 	urls := make([]string, 0)
 
-	htmlDoc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
-		attrib, _ := s.Attr("href")
+	htmlDoc.Find("img[src]").Each(func(_ int, s *goquery.Selection) {
+		attrib, _ := s.Attr("src")
 		if strings.TrimSpace(attrib) != "" {
 			urls = append(urls, strings.TrimSpace(attrib))
 		}
