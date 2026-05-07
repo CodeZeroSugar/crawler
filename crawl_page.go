@@ -17,12 +17,24 @@ func (cfg *config) addPageVisit(normalizedURL string) (isFirst bool) {
 	return true
 }
 
+func (cfg *config) checkPageLength() bool {
+	cfg.mu.Lock()
+	defer cfg.mu.Unlock()
+	if len(cfg.pages) >= cfg.maxPages {
+		return true
+	}
+	return false
+}
+
 func (cfg *config) crawlPage(rawCurrentURL string) {
 	cfg.concurrencyControl <- struct{}{}
 	defer func() {
 		<-cfg.concurrencyControl
 		cfg.wg.Done()
 	}()
+	if cfg.checkPageLength() {
+		return
+	}
 
 	parsedCurrent, _ := url.Parse(rawCurrentURL)
 	if cfg.baseURL.Hostname() != parsedCurrent.Hostname() {
@@ -35,11 +47,11 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		return
 	}
 
+	fmt.Printf("crawling %s\n", normalizedCurrent)
 	htmlText, err := getHTML(rawCurrentURL)
 	if err != nil {
 		fmt.Printf("getHTML error: %s\n", err)
 	}
-	fmt.Println(htmlText)
 
 	cfg.pages[normalizedCurrent] = extractPageData(htmlText, cfg.baseURL.String())
 
