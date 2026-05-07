@@ -12,31 +12,12 @@ type PageData struct {
 	ImageURLs      []string
 }
 
-func extractPageData(html, pageURL string) (PageData, error) {
-	baseURL, err := url.Parse(pageURL)
-	if err != nil {
-		return PageData{}, err
-	}
-
-	heading, err := getHeadingFromHTML(html)
-	if err != nil {
-		return PageData{}, err
-	}
-
-	firstParagraph, err := getFirstParagraphFromHTML(html)
-	if err != nil {
-		return PageData{}, err
-	}
-
-	outLinks, err := getURLsFromHTML(html, baseURL)
-	if err != nil {
-		return PageData{}, err
-	}
-
-	imgURLs, err := getImagesFromHTML(html, baseURL)
-	if err != nil {
-		return PageData{}, err
-	}
+func extractPageData(html, pageURL string) PageData {
+	baseURL, _ := url.Parse(pageURL)
+	heading, _ := getHeadingFromHTML(html)
+	firstParagraph, _ := getFirstParagraphFromHTML(html)
+	outLinks, _ := getURLsFromHTML(html, baseURL)
+	imgURLs, _ := getImagesFromHTML(html, baseURL)
 
 	return PageData{
 		URL:            baseURL.String(),
@@ -44,5 +25,5 @@ func extractPageData(html, pageURL string) (PageData, error) {
 		FirstParagraph: firstParagraph,
 		OutgoingLinks:  outLinks,
 		ImageURLs:      imgURLs,
-	}, nil
+	}
 }
